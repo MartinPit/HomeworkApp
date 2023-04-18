@@ -1,12 +1,20 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_app/screens/auth_screen.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   final TextTheme textTheme = const TextTheme(
     displayLarge: TextStyle(
       fontFamily: 'Roboto',
@@ -120,7 +128,8 @@ class MyApp extends StatelessWidget {
     background: Colors.white,
     onBackground: Color.fromRGBO(28, 28, 22, 1),
     surface: Color.fromRGBO(253, 249, 240, 1),
-    onSurface: Color.fromRGBO(28, 28, 22, 1),);
+    onSurface: Color.fromRGBO(28, 28, 22, 1),
+  );
   final ColorScheme darkColorScheme = const ColorScheme(
     brightness: Brightness.dark,
     primary: Color.fromRGBO(208, 203, 73, 1),
@@ -142,7 +151,8 @@ class MyApp extends StatelessWidget {
     background: Color.fromRGBO(28, 28, 22, 1),
     onBackground: Color.fromRGBO(230, 226, 217, 1),
     surface: Color.fromRGBO(20, 20, 15, 1),
-    onSurface: Color.fromRGBO(202, 198, 190, 1),);
+    onSurface: Color.fromRGBO(202, 198, 190, 1),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -152,17 +162,23 @@ class MyApp extends StatelessWidget {
           title: 'HomeworkApp',
           theme: ThemeData(
             textTheme: textTheme,
-            colorScheme: lightDynamic ?? colorScheme,
+            colorScheme: colorScheme,
             brightness: Brightness.light,
+            useMaterial3: true,
           ),
           darkTheme: ThemeData(
             textTheme: textTheme,
-            colorScheme: darkDynamic ?? darkColorScheme,
+            colorScheme: darkColorScheme,
             brightness: Brightness.dark,
+            useMaterial3: true,
           ),
           themeMode: ThemeMode.system,
           debugShowCheckedModeBanner: false,
-          home: const Center(child: Text('HomeworkApp')),
+          home: widget(
+            child: const Scaffold(
+              body: AuthScreen(),
+            ),
+          ),
         );
       },
     );
