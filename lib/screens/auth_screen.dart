@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/person.dart';
 import '../widgets/auth/login_form.dart';
@@ -11,7 +13,35 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  Role roleSelection = Role.student;
+  Role _roleSelection = Role.student;
+
+  Future<void> _tryLogin(String uco, String password) async {
+    final user = await FirebaseFirestore.instance.collection('users').doc(uco).get();
+    if (!user.exists) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Používateľ neexistuje'),
+        behavior: SnackBarBehavior.floating,
+      ));
+      return;
+    }
+
+    if (user['role'] != _roleSelection.toEnglishString()) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Nesprávna rola'),
+        behavior: SnackBarBehavior.floating,
+      ));
+      return;
+    }
+
+    try {
+      FirebaseAuth.instance.signInWithEmailAndPassword(email: user['email'], password: password);
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message ?? 'Nastala chyba'),
+        behavior: SnackBarBehavior.floating,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +86,16 @@ class _AuthScreenState extends State<AuthScreen> {
                       icon: const Icon(Icons.supervisor_account_outlined),
                     ),
                   ],
-                  selected: {roleSelection},
+                  selected: {_roleSelection},
                   emptySelectionAllowed: false,
                   multiSelectionEnabled: false,
                   onSelectionChanged: (Set<Role> newSelection) =>
-                      setState(() => roleSelection = newSelection.first),
+                      setState(() => _roleSelection = newSelection.first),
                 ),
                 const SizedBox(
                   height: 15,
                 ),
-                const LoginForm(),
+                LoginForm(handler: _tryLogin),
               ],
             ),
           ),

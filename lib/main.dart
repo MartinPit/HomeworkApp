@@ -1,11 +1,15 @@
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_app/screens/auth_screen.dart';
+import 'package:homework_app/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -174,11 +178,12 @@ class MyApp extends StatelessWidget {
           ),
           themeMode: ThemeMode.system,
           debugShowCheckedModeBanner: false,
-          home: widget(
-            child: const Scaffold(
-              body: AuthScreen(),
+          home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) => snapshot.hasData
+                ? const HomeScreen()
+                : const AuthScreen(),
             ),
-          ),
         );
       },
     );

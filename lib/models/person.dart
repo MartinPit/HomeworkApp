@@ -9,4 +9,11 @@ extension Stringifier on Role {
     }
     return 'Študent';
   }
+
+  String toEnglishString() {
+    if (this == Role.teacher) {
+      return 'teacher';
+    }
+    return 'student';
+  }
 }
