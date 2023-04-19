@@ -1,6 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../models/person.dart';
 
 class LoginForm extends StatefulWidget {
   final Function(String uco, String password) handler;
@@ -35,6 +34,48 @@ class _LoginFormState extends State<LoginForm> {
     });
   }
 
+  void _resetPassword() async {
+    String email = '';
+
+    void _sendResetMail() async {
+      try {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        Navigator.of(context).pop();
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.message ?? 'Nastala chyba'),
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Prosím zadajte váš e-mail'),
+        content: TextField(
+          onChanged: (value) => email = value,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+              isDense: true,
+              border: OutlineInputBorder(),
+              label: Text('E-mail'),
+              prefixIcon: Icon(Icons.email_outlined)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Zrušiť'),
+          ),
+          TextButton(
+            onPressed: _sendResetMail,
+            child: const Text('Zaslať'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -53,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
                   return 'Učo je príliš dlhé';
                 }
 
-                try{
+                try {
                   int.parse(value);
                 } on FormatException {
                   return 'Učo musí byť celé číslo';
@@ -90,7 +131,9 @@ class _LoginFormState extends State<LoginForm> {
               onSaved: (value) {
                 _password = value!;
               },
-              keyboardType: !_obscureText ? TextInputType.visiblePassword : TextInputType.text,
+              keyboardType: !_obscureText
+                  ? TextInputType.visiblePassword
+                  : TextInputType.text,
               decoration: InputDecoration(
                 isDense: true,
                 border: const OutlineInputBorder(),
@@ -125,7 +168,7 @@ class _LoginFormState extends State<LoginForm> {
               child: const Text('Prihlásiť sa'),
             ),
           TextButton(
-            onPressed: () {},
+            onPressed: _resetPassword,
             child: const Text('Zabudnuté heslo?'),
           ),
         ],
