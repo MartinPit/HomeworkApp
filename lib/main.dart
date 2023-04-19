@@ -2,8 +2,10 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:homework_app/screens/auth_screen.dart';
 import 'package:homework_app/screens/home_screen.dart';
+import 'package:homework_app/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -14,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 
@@ -161,11 +164,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return ChangeNotifierProvider<User>(
-          create: (context) => User(),
-          builder: (context, _) => MaterialApp(
+    return ChangeNotifierProvider(
+      create: (context) => User(),
+      child: DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+          return MaterialApp(
             title: 'HomeworkApp',
             theme: ThemeData(
               textTheme: textTheme,
@@ -183,12 +186,22 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) =>
-                  snapshot.hasData ? const HomeScreen() : const AuthScreen(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),);
+                }
+                return !snapshot.hasData
+                  ? const AuthScreen()
+                  : const HomeScreen();
+              },
             ),
-          ),
-        );
-      },
+            routes: {
+              ProfileScreen.routeName: (context) => const ProfileScreen(),
+            },
+          );
+        },
+      ),
     );
   }
 }

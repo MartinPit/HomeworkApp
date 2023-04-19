@@ -1,7 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException;
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 
 import '../models/user.dart';
 import '../widgets/auth/login_form.dart';
@@ -17,15 +16,15 @@ class _AuthScreenState extends State<AuthScreen> {
   Role _roleSelection = Role.student;
 
   Future<void> _tryLogin(String uco, String password) async {
-    final user = await FirebaseFirestore.instance.collection('users').doc(uco).get();
-    if (!user.exists) {
+    final entry = await FirebaseFirestore.instance.collection('users').where('uco', isEqualTo: uco).get();
+    if (entry.docs.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Používateľ neexistuje'),
         behavior: SnackBarBehavior.floating,
       ));
       return;
     }
-
+    final user = entry.docs.first;
     if (user['role'] != _roleSelection.toEnglishString()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Nesprávna rola'),
@@ -35,20 +34,18 @@ class _AuthScreenState extends State<AuthScreen> {
     }
 
     try {
-      FirebaseAuth.instance.signInWithEmailAndPassword(email: user['email'], password: password);
-      Provider.of<User>(context, listen: false).init(uco, user['name'], _roleSelection);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: user['email'], password: password);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.message ?? 'Nastala chyba'),
         behavior: SnackBarBehavior.floating,
       ));
-    }
+    } catch (e) {}
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: GestureDetector(
         onTap: () {

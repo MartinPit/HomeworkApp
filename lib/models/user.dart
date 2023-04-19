@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 enum Role {
@@ -21,23 +23,37 @@ extension Stringifier on Role {
 }
 
 class User with ChangeNotifier {
-  String uco = '';
-  String name = '';
-  Role? role;
-  List<String> subjects = [];
+  String _uco = '';
+  String _name = '';
+  String _surname = '';
+  Role? _role;
 
-  User();
 
-  void init(String uco, String name, Role role) {
-    this.uco = uco;
-    this.name = name;
-    this.role = role;
+  String get uco => _uco;
+
+  String get name => _name;
+
+  String get surname => _surname;
+
+  void init() {
+    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+      _uco = value['uco'];
+      _name = value['name'];
+      _surname = value['surname'];
+      _role = value['role'] == 'teacher' ? Role.teacher : Role.student;
+      notifyListeners();
+    });
   }
 
   void clear() {
-    uco = '';
-    name = '';
-    role = null;
-    subjects = [];
+    _uco = '';
+    _name = '';
+    _role = null;
+    _surname = '';
+    notifyListeners();
+  }
+
+  bool isStudent() {
+    return _role == Role.student;
   }
 }
