@@ -1,5 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_app/screens/auth_screen.dart';
@@ -7,6 +7,7 @@ import 'package:homework_app/screens/home_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'models/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -162,28 +163,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        return MaterialApp(
-          title: 'HomeworkApp',
-          theme: ThemeData(
-            textTheme: textTheme,
-            colorScheme: colorScheme,
-            brightness: Brightness.light,
-            useMaterial3: true,
-          ),
-          darkTheme: ThemeData(
-            textTheme: textTheme,
-            colorScheme: darkColorScheme,
-            brightness: Brightness.dark,
-            useMaterial3: true,
-          ),
-          themeMode: ThemeMode.system,
-          debugShowCheckedModeBanner: false,
-          home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, snapshot) => snapshot.hasData
-                ? const HomeScreen()
-                : const AuthScreen(),
+        return ChangeNotifierProvider<User>(
+          create: (context) => User(),
+          builder: (context, _) => MaterialApp(
+            title: 'HomeworkApp',
+            theme: ThemeData(
+              textTheme: textTheme,
+              colorScheme: colorScheme,
+              brightness: Brightness.light,
+              useMaterial3: true,
             ),
+            darkTheme: ThemeData(
+              textTheme: textTheme,
+              colorScheme: darkColorScheme,
+              brightness: Brightness.dark,
+              useMaterial3: true,
+            ),
+            themeMode: ThemeMode.system,
+            debugShowCheckedModeBanner: false,
+            home: StreamBuilder(
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (context, snapshot) =>
+                  snapshot.hasData ? const HomeScreen() : const AuthScreen(),
+            ),
+          ),
         );
       },
     );

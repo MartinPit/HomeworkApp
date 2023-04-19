@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
-import '../models/person.dart';
+import '../models/user.dart';
 import '../widgets/auth/login_form.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       FirebaseAuth.instance.signInWithEmailAndPassword(email: user['email'], password: password);
+      Provider.of<User>(context, listen: false).init(uco, user['name'], _roleSelection);
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.message ?? 'Nastala chyba'),
