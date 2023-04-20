@@ -5,20 +5,20 @@ import 'package:provider/provider.dart';
 
 import '../models/user.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class StudentScreen extends StatefulWidget {
+  const StudentScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<StudentScreen> createState() => _StudentScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _StudentScreenState extends State<StudentScreen> {
   late final user;
 
   @override
   void initState() {
     super.initState();
-    user = Provider.of<User>(context, listen: false)..init();
+    user = Provider.of<User>(context, listen: false);
   }
 
   @override

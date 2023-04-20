@@ -35,14 +35,13 @@ class User with ChangeNotifier {
 
   String get surname => _surname;
 
-  void init() {
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
-      _uco = value['uco'];
-      _name = value['name'];
-      _surname = value['surname'];
-      _role = value['role'] == 'teacher' ? Role.teacher : Role.student;
-      notifyListeners();
-    });
+  Future<void> init() async {
+    final value = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
+    _uco = value['uco'];
+    _name = value['name'];
+    _surname = value['surname'];
+    _role = value['role'] == 'teacher' ? Role.teacher : Role.student;
+    notifyListeners();
   }
 
   void clear() {

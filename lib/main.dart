@@ -4,7 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:homework_app/screens/auth_screen.dart';
-import 'package:homework_app/screens/home_screen.dart';
+import 'package:homework_app/screens/teacher_screen.dart';
+import 'package:homework_app/screens/student_screen.dart';
 import 'package:homework_app/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -189,11 +190,27 @@ class MyApp extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child: CircularProgressIndicator(),);
+                    child: CircularProgressIndicator(),
+                  );
                 }
-                return !snapshot.hasData
-                  ? const AuthScreen()
-                  : const HomeScreen();
+                if (!snapshot.hasData) {
+                  return const AuthScreen();
+                } else {
+                  final user = Provider.of<User>(context, listen: false);
+                  return FutureBuilder(
+                    future: user.init(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return user.isStudent()
+                          ? const StudentScreen()
+                          : const TeacherScreen();
+                    },
+                  );
+                }
               },
             ),
             routes: {
