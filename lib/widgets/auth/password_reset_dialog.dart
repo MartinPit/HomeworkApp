@@ -55,7 +55,7 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
                 ),
                 obscureText: true,
                 controller: _controller,
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
               ),
               const SizedBox(
                 height: 5,
@@ -79,7 +79,8 @@ class _PasswordResetDialogState extends State<PasswordResetDialog> {
                 onSaved: (value) {
                   _password = value!;
                 },
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _trySubmit(),
               ),
             ],
           ),

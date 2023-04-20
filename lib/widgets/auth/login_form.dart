@@ -135,6 +135,7 @@ class _LoginFormState extends State<LoginForm> {
                   ? TextInputType.visiblePassword
                   : TextInputType.text,
               textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _saveForm(),
               decoration: InputDecoration(
                 label: const Text('Heslo'),
                 isDense: true,
