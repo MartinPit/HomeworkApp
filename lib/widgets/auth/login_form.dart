@@ -134,7 +134,9 @@ class _LoginFormState extends State<LoginForm> {
               keyboardType: !_obscureText
                   ? TextInputType.visiblePassword
                   : TextInputType.text,
+              textInputAction: TextInputAction.done,
               decoration: InputDecoration(
+                label: const Text('Heslo'),
                 isDense: true,
                 border: const OutlineInputBorder(),
                 suffixIcon: IconButton(

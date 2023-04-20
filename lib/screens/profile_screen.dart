@@ -3,6 +3,7 @@ import 'package:homework_app/widgets/profile/item_list.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
+import '../widgets/auth/password_reset_dialog.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const String routeName = '/profile_screen';
@@ -13,6 +14,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Profil'),
         ),
@@ -59,7 +61,7 @@ class ProfileScreen extends StatelessWidget {
                   Text(user.uco,
                       style: Theme.of(context).textTheme.headlineSmall),
                   FilledButton.tonal(
-                      onPressed: () {}, child: const Text('Zmeniť heslo')),
+                      onPressed: () async => await showDialog(context: context, builder: (context) => const PasswordResetDialog(),), child: const Text('Zmeniť heslo')),
                 ],
               ),
               ItemList(user: user),

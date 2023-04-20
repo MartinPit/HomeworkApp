@@ -58,7 +58,7 @@ class _StudentScreenState extends State<StudentScreen> {
                   const SizedBox(width: 7),
                   InputChip(
                     label: const Text('Dátum'),
-                    avatar: _dateSelected ? null : const Icon(Icons.today),
+                    avatar: _dateSelected ? null : Icon(Icons.today, color: Theme.of(context).colorScheme.onSurface,),
                     onPressed: !_dateSelected ? () async {
                       await showDatePicker(
                         context: context,

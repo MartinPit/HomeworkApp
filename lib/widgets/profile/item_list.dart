@@ -15,8 +15,11 @@ class ItemList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            user.isStudent() ? 'Predmety' : 'Triedy',
+          Padding(
+            padding: const EdgeInsets.only(left: 15, bottom: 4),
+            child: Text(
+              user.isStudent() ? 'Predmety' : 'Triedy',
+            ),
           ),
           Container(
             padding: const EdgeInsets.only(top: 8, bottom: 8),
