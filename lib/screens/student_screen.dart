@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:homework_app/models/homeworks.dart';
 import 'package:homework_app/widgets/home/dropdown_chip.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
+import '../widgets/home/homework_tile.dart';
 
 class StudentScreen extends StatefulWidget {
   const StudentScreen({Key? key}) : super(key: key);
@@ -27,6 +29,7 @@ class _StudentScreenState extends State<StudentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeworkList = Provider.of<Homeworks>(context);
     return Scaffold(
       appBar: const HomeAppBar(title: 'Úlohy'),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -58,26 +61,47 @@ class _StudentScreenState extends State<StudentScreen> {
                   const SizedBox(width: 7),
                   InputChip(
                     label: const Text('Dátum'),
-                    avatar: _dateSelected ? null : Icon(Icons.today, color: Theme.of(context).colorScheme.onSurface,),
-                    onPressed: !_dateSelected ? () async {
-                      await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate:
-                            DateTime.now().subtract(const Duration(days: 365)),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                      );
-                      setState(
-                        () => _dateSelected = true,
-                      );
-                    } : () => setState(() => _dateSelected = false),
+                    avatar: _dateSelected
+                        ? null
+                        : Icon(
+                            Icons.today,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                    onPressed: !_dateSelected
+                        ? () async {
+                            await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now()
+                                  .subtract(const Duration(days: 365)),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 365)),
+                            );
+                            setState(
+                              () => _dateSelected = true,
+                            );
+                          }
+                        : () => setState(() => _dateSelected = false),
                     selected: _dateSelected,
                   ),
                   const SizedBox(width: 7),
-                  FilterChip(label: const Text('Ohodnotené'), onSelected: (_) => setState(() => _scoredSelected = !_scoredSelected), selected: _scoredSelected),
+                  FilterChip(
+                      label: const Text('Ohodnotené'),
+                      onSelected: (_) =>
+                          setState(() => _scoredSelected = !_scoredSelected),
+                      selected: _scoredSelected),
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemBuilder: (context, index) => ChangeNotifierProvider.value(
+                    value: homeworkList.homeworks[index],
+                    child: const HomeworkTile()),
+                itemCount: homeworkList.homeworks.length,
+              ),
+            )
           ],
         ),
       ),

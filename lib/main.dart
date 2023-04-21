@@ -10,6 +10,7 @@ import 'package:homework_app/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
+import 'models/homeworks.dart';
 import 'models/user.dart';
 
 void main() async {
@@ -165,8 +166,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => User(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => User()),
+        ChangeNotifierProvider(create: (context) => Homeworks()),
+      ],
       child: DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
           return MaterialApp(

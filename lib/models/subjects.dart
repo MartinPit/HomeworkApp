@@ -11,7 +11,12 @@ enum Subject {
   Low_Level_Programming,
 }
 
-extension on Subject {
+extension Stringifier on Subject {
+  String toEnglishString() {
+    return toString().split('.').last;
+  }
+
+
   Subject fromString(String str) {
     switch (str) {
       case 'English':
