@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homework_app/widgets/profile/item_list.dart';
-import 'package:provider/provider.dart';
 
-import '../models/user.dart';
 import '../widgets/auth/password_reset_dialog.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -12,8 +10,10 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isStudent = ModalRoute.of(context)!.settings.arguments as bool;
-    final user = Provider.of<User>(context);
+    final variables = ModalRoute.of(context)!.settings.arguments as List;
+    final bool isStudent = variables[0];
+    final user = variables[1];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
         appBar: AppBar(

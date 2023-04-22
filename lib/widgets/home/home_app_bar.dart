@@ -19,12 +19,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    late final dynamic user;
+    isStudent
+        ? user = Provider.of<Student>(context, listen: false)
+        : user = Provider.of<Teacher>(context, listen: false);
+
     return AppBar(
       title: Text(title),
       actions: [
         IconButton(
             onPressed: () => Navigator.of(context)
-                .pushNamed(ProfileScreen.routeName, arguments: isStudent),
+                .pushNamed(ProfileScreen.routeName, arguments: [isStudent, user]),
             icon: const Icon(Icons.account_circle_outlined)),
         IconButton(
           onPressed: () async {
