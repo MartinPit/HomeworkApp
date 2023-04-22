@@ -21,7 +21,8 @@ class _TeacherScreenState extends State<TeacherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(title: pages[_selectedIndex]['title'] as String, isStudent: false),
+      appBar: HomeAppBar(
+          title: pages[_selectedIndex]['title'] as String, isStudent: false),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Container(
           height: MediaQuery.of(context).size.height,

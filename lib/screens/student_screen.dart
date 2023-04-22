@@ -98,7 +98,7 @@ class _StudentScreenState extends State<StudentScreen> {
               child: ListView.builder(
                 itemBuilder: (context, index) => ChangeNotifierProvider.value(
                     value: homeworkList[index],
-                    child: const HomeworkTile()),
+                    child: const HomeworkTile(isHomework: true)),
                 itemCount: homeworkList.length,
               ),
             )

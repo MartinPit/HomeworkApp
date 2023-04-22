@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:homework_app/models/student.dart';
+import 'package:homework_app/models/submissions.dart';
 import 'package:homework_app/screens/auth_screen.dart';
 import 'package:homework_app/screens/teacher_screen.dart';
 import 'package:homework_app/screens/student_screen.dart';
@@ -171,6 +172,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Homeworks()),
+        ChangeNotifierProvider(create: (context) => Submissions()),
       ],
       child: DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {

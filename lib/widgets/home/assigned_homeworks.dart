@@ -54,7 +54,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
               itemBuilder: (context, index) =>
                   ChangeNotifierProvider.value(
                       value: _homeworks[index],
-                      child: const HomeworkTile()),
+                      child: const HomeworkTile(isHomework: true)),
               itemCount: _homeworks.length),
         ),
       ],
