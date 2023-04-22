@@ -6,7 +6,8 @@ import '../../models/user.dart';
 
 class ItemList extends StatelessWidget {
   final User user;
-  const ItemList({Key? key, required this.user}) : super(key: key);
+  final bool isStudent;
+  const ItemList({Key? key, required this.user, required this.isStudent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class ItemList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 15, bottom: 4),
             child: Text(
-              user.isStudent() ? 'Predmety' : 'Triedy',
+              isStudent ? 'Predmety' : 'Triedy',
             ),
           ),
           Container(
@@ -40,12 +41,12 @@ class ItemList extends StatelessWidget {
                     return const Center(
                         child: CircularProgressIndicator());
                   }
-                  final data = user.isStudent()
+                  final data = isStudent
                       ? snapshot.data!['subjects']
                       : snapshot.data!['classes'];
                   return ListView.separated(
                     itemBuilder: (context, index) => ListTile(
-                      visualDensity: VisualDensity(vertical: -4),
+                      visualDensity: const VisualDensity(vertical: -4),
                       title: Text(data[index],
                           style: TextStyle(
                               color: Theme.of(context)

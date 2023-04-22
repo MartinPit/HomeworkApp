@@ -29,9 +29,11 @@ class _LoginFormState extends State<LoginForm> {
       _isLoading = true;
     });
     await widget.handler(_uco, _password);
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _resetPassword() async {

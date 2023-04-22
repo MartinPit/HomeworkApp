@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:homework_app/models/subjects.dart';
 
 import '../../models/homework.dart';
 
@@ -28,7 +26,7 @@ class HomeworkTile extends StatelessWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: const Icon(
-                  Icons.book,
+                  Icons.class_,
                   size: 30,
                 ),
               ),
@@ -39,8 +37,6 @@ class HomeworkTile extends StatelessWidget {
                   Text(homework.title,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 5),
-                  Text(homework.subject.toEnglishString(),
-                      style: Theme.of(context).textTheme.labelMedium),
                   Text(DateFormat('d. MMMM y').format(homework.deadline),
                       style: Theme.of(context).textTheme.labelSmall),
                 ],

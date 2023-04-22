@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:homework_app/models/student.dart';
 import 'package:homework_app/screens/auth_screen.dart';
 import 'package:homework_app/screens/teacher_screen.dart';
 import 'package:homework_app/screens/student_screen.dart';
@@ -11,7 +13,7 @@ import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'models/homeworks.dart';
-import 'models/user.dart';
+import 'models/teacher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -168,7 +170,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => User()),
         ChangeNotifierProvider(create: (context) => Homeworks()),
       ],
       child: DynamicColorBuilder(
@@ -200,18 +201,28 @@ class MyApp extends StatelessWidget {
                 if (!snapshot.hasData) {
                   return const AuthScreen();
                 } else {
-                  final user = Provider.of<User>(context, listen: false);
                   return FutureBuilder(
-                    future: user.init(),
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
                           child: CircularProgressIndicator(),
                         );
                       }
-                      return user.isStudent()
-                          ? const StudentScreen()
-                          : const TeacherScreen();
+                      if (snapshot.data!['role'] == 'student') {
+                        return ChangeNotifierProvider(
+                          create: (BuildContext context) =>
+                              Student.fromSnapshot(snapshot.data!),
+                          child: const StudentScreen(),
+                        );
+                      }
+                      return ChangeNotifierProvider(
+                          create: (BuildContext context) =>
+                              Teacher.fromSnapshot(snapshot.data!),
+                          child: const TeacherScreen());
                     },
                   );
                 }

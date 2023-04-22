@@ -7,8 +7,9 @@ import '../../screens/profile_screen.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final bool isStudent;
 
-  const HomeAppBar({Key? key, required this.title}) : super(key: key);
+  const HomeAppBar({Key? key, required this.title, required this.isStudent}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -20,7 +21,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
             onPressed: () =>
-                Navigator.of(context).pushNamed(ProfileScreen.routeName),
+                Navigator.of(context).pushNamed(ProfileScreen.routeName, arguments: isStudent),
             icon: const Icon(Icons.account_circle_outlined)),
         IconButton(
           onPressed: () async {

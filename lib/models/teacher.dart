@@ -1,23 +1,23 @@
-import 'package:homework_app/models/subjects.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot;
+import 'package:flutter/cupertino.dart';
 import 'package:homework_app/models/user.dart';
 
 import 'classes.dart';
 
-abstract class Teacher {
-  late String _uco;
-  late String _name;
-  late String _surname;
-  late Role _role;
-  late List<Subject> _subjects;
+class Teacher extends User with ChangeNotifier {
   late List<Class> _classes;
 
-  String get uco => _uco;
-  String get name => _name;
-  String get surname => _surname;
-  List<Subject> get subjects => [..._subjects];
   List<Class> get classes => [..._classes];
 
-  bool isStudent();
+  Teacher.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) : super.fromSnapshot(snapshot) {
+    _classes = snapshot['classes'].map<Class>((e) => Class.values.firstWhere((element) => element.toEnglishString() == e)).toList();
+    notifyListeners();
+  }
 
-  void clear();
+  @override
+  void clear() {
+    super.clear();
+    _classes = [];
+    notifyListeners();
+  }
 }

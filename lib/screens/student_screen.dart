@@ -5,7 +5,6 @@ import 'package:homework_app/widgets/home/home_app_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../models/student.dart';
-import '../models/user.dart';
 import '../widgets/home/homework_tile.dart';
 
 class StudentScreen extends StatefulWidget {
@@ -25,14 +24,14 @@ class _StudentScreenState extends State<StudentScreen> {
   @override
   void initState() {
     super.initState();
-    user = Provider.of<User>(context, listen: false);
+    user = Provider.of<Student>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
     final homeworkList = Provider.of<Homeworks>(context).homeworks.where((element) => element.className == user.class_).toList();
     return Scaffold(
-      appBar: const HomeAppBar(title: 'Úlohy'),
+      appBar: const HomeAppBar(title: 'Úlohy', isStudent: true),
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Container(
         height: MediaQuery.of(context).size.height,

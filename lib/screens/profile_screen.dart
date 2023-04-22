@@ -12,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isStudent = ModalRoute.of(context)!.settings.arguments as bool;
     final user = Provider.of<User>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -33,7 +34,7 @@ class ProfileScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
-                    image: AssetImage(user.isStudent()
+                    image: AssetImage(isStudent
                         ? 'assets/avatars/3d_avatar_18.png'
                         : 'assets/avatars/3d_avatar_2.png'),
                     fit: BoxFit.cover,
@@ -64,7 +65,7 @@ class ProfileScreen extends StatelessWidget {
                       onPressed: () async => await showDialog(context: context, builder: (context) => const PasswordResetDialog(),), child: const Text('Zmeniť heslo')),
                 ],
               ),
-              ItemList(user: user),
+              ItemList(user: user, isStudent: isStudent),
             ],
           ),
         ));
