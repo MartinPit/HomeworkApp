@@ -4,6 +4,7 @@ import 'package:homework_app/widgets/home/dropdown_chip.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
 import 'package:provider/provider.dart';
 
+import '../models/student.dart';
 import '../models/user.dart';
 import '../widgets/home/homework_tile.dart';
 
@@ -15,7 +16,7 @@ class StudentScreen extends StatefulWidget {
 }
 
 class _StudentScreenState extends State<StudentScreen> {
-  late final User user;
+  late final Student user;
   bool _submittedSelected = false;
   bool _dateSelected = false;
   bool _subjectSelected = false;
@@ -29,7 +30,7 @@ class _StudentScreenState extends State<StudentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeworkList = Provider.of<Homeworks>(context);
+    final homeworkList = Provider.of<Homeworks>(context).homeworks.where((element) => element.className == user.class_).toList();
     return Scaffold(
       appBar: const HomeAppBar(title: 'Úlohy'),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -97,9 +98,9 @@ class _StudentScreenState extends State<StudentScreen> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) => ChangeNotifierProvider.value(
-                    value: homeworkList.homeworks[index],
+                    value: homeworkList[index],
                     child: const HomeworkTile()),
-                itemCount: homeworkList.homeworks.length,
+                itemCount: homeworkList.length,
               ),
             )
           ],
