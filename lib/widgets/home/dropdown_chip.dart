@@ -10,12 +10,16 @@ class DropdownFilterChip<T> extends HookWidget {
     this.value,
     required this.items,
     required this.onChanged,
+    this.dropdownWidth = 105,
+    this.dropdownOffset = const Offset(-88, 0),
   }) : super(key: key);
 
   final Widget label;
   final T? value;
   final List<DropdownMenuItem<T>> items;
   final void Function(T? value) onChanged;
+  final double dropdownWidth;
+  final Offset dropdownOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +45,7 @@ class DropdownFilterChip<T> extends HookWidget {
                 });
               },
               dropdownStyleData: DropdownStyleData(
-                width: 105,
+                width: dropdownWidth,
                 padding: const EdgeInsets.symmetric(vertical: 6),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
@@ -54,7 +58,7 @@ class DropdownFilterChip<T> extends HookWidget {
                     ),
                   ],
                 ),
-                offset: const Offset(-88, 0),
+                offset: dropdownOffset,
               ),
               menuItemStyleData: const MenuItemStyleData(
                 padding: EdgeInsets.symmetric(horizontal: 8),

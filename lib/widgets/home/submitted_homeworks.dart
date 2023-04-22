@@ -83,7 +83,8 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
                       DropdownFilterChip(
                           label: const Text('Trieda'),
                           items: const [DropdownMenuItem(child: Text('yup'))],
-                          onChanged: (_) {}),
+                          onChanged: (_) {},
+                          dropdownWidth: 90, dropdownOffset: const Offset(-73, 0)),
                       const SizedBox(width: 7),
                       FilterChip(
                         label: const Text('Ohodnotené'),

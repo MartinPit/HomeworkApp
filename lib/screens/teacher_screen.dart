@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:homework_app/widgets/home/add_dialog.dart';
 import 'package:homework_app/widgets/home/assigned_homeworks.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
 
@@ -48,6 +51,18 @@ class _TeacherScreenState extends State<TeacherScreen> {
               selectedIcon: Icon(Icons.task)),
         ],
       ),
+      floatingActionButton: _selectedIndex == 1
+          ? null
+          : FloatingActionButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                  child: const AddDialog(),
+                ),
+              ),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 }
