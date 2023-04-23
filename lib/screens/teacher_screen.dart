@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:homework_app/widgets/home/add_dialog.dart';
 import 'package:homework_app/widgets/home/assigned_homeworks.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
+import 'package:provider/provider.dart';
 
+import '../models/teacher.dart';
 import '../widgets/home/submitted_homeworks.dart';
 
 class TeacherScreen extends StatefulWidget {
@@ -23,6 +25,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<Teacher>(context);
     return Scaffold(
       appBar: HomeAppBar(
           title: pages[_selectedIndex]['title'] as String, isStudent: false),
@@ -58,7 +61,7 @@ class _TeacherScreenState extends State<TeacherScreen> {
                 context: context,
                 builder: (context) => BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                  child: const AddDialog(),
+                  child: AddDialog(user: user),
                 ),
               ),
               child: const Icon(Icons.add),

@@ -12,6 +12,7 @@ class DropdownFilterChip<T> extends HookWidget {
     required this.onChanged,
     this.dropdownWidth = 105,
     this.dropdownOffset = const Offset(-88, 0),
+    this.selected = false,
   }) : super(key: key);
 
   final Widget label;
@@ -20,14 +21,16 @@ class DropdownFilterChip<T> extends HookWidget {
   final void Function(T? value) onChanged;
   final double dropdownWidth;
   final Offset dropdownOffset;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
     final dropdownButtonKey = useMemoized(() => GlobalKey());
     final focusNode = useFocusNode();
     return FilterChip(
+      selected: selected,
       label: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: [
           label,
           const SizedBox(width: 8),

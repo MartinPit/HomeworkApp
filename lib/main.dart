@@ -215,13 +215,13 @@ class MyApp extends StatelessWidget {
                         );
                       }
                       if (snapshot.data!['role'] == 'student') {
-                        return ChangeNotifierProvider(
+                        return ChangeNotifierProvider<Student>(
                           create: (BuildContext context) =>
                               Student.fromSnapshot(snapshot.data!),
                           child: const StudentScreen(),
                         );
                       }
-                      return ChangeNotifierProvider(
+                      return ChangeNotifierProvider<Teacher>(
                           create: (BuildContext context) =>
                               Teacher.fromSnapshot(snapshot.data!),
                           child: const TeacherScreen());
