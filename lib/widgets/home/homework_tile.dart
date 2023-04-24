@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_app/screens/submission_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -56,11 +57,13 @@ class HomeworkTile extends StatelessWidget {
     final result = getSubmission(data, context);
     final QueryDocumentSnapshot<Map<String, dynamic>>? submission = result[0];
     final bool hide = result[1];
-    print(submittedSelected);
-    return GestureDetector(
-      child: hide
-          ? Container()
-          : Card(
+    return hide
+        ? Container()
+        : GestureDetector(
+            onTap: () => Navigator.pushNamed(
+                context, SubmissionScreen.routeName,
+                arguments: [data, submission]),
+            child: Card(
               margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -109,6 +112,6 @@ class HomeworkTile extends StatelessWidget {
                 ),
               ),
             ),
-    );
+          );
   }
 }

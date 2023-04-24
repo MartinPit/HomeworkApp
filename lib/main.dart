@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:homework_app/models/student.dart';
 import 'package:homework_app/models/submissions.dart';
 import 'package:homework_app/screens/auth_screen.dart';
+import 'package:homework_app/screens/submission_screen.dart';
 import 'package:homework_app/screens/teacher_screen.dart';
 import 'package:homework_app/screens/student_screen.dart';
 import 'package:homework_app/screens/profile_screen.dart';
@@ -142,6 +143,7 @@ class MyApp extends StatelessWidget {
     onBackground: Color.fromRGBO(28, 28, 22, 1),
     surface: Color.fromRGBO(253, 249, 240, 1),
     onSurface: Color.fromRGBO(28, 28, 22, 1),
+    surfaceVariant: Color.fromRGBO(230, 226, 217, 1),
   );
   final ColorScheme darkColorScheme = const ColorScheme(
     brightness: Brightness.dark,
@@ -165,6 +167,8 @@ class MyApp extends StatelessWidget {
     onBackground: Color.fromRGBO(230, 226, 217, 1),
     surface: Color.fromRGBO(20, 20, 15, 1),
     onSurface: Color.fromRGBO(202, 198, 190, 1),
+    onSurfaceVariant: Color.fromRGBO(202, 199, 182, 1),
+    surfaceVariant: Color.fromRGBO(54, 53, 47, 1),
   );
 
   @override
@@ -232,6 +236,7 @@ class MyApp extends StatelessWidget {
             ),
             routes: {
               ProfileScreen.routeName: (context) => const ProfileScreen(),
+              SubmissionScreen.routeName: (context) => const SubmissionScreen(),
             },
           );
         },
