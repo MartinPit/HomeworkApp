@@ -8,6 +8,7 @@ import '../../models/grade.dart';
 import '../../models/homework.dart';
 import '../../models/student.dart';
 import '../../models/submission.dart';
+import '../../models/teacher.dart';
 
 class HomeworkTile extends StatefulWidget {
   final bool submittedSelected;
@@ -59,13 +60,18 @@ class _HomeworkTileState extends State<HomeworkTile> {
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<Homework>(context);
-    final user = Provider.of<Student>(context, listen: false);
+    final user;
+    if (!widget.isTeacher) {
+      user = Provider.of<Student>(context, listen: false);
+    } else {
+      user = Provider.of<Teacher>(context, listen: false);
+    }
     return FutureBuilder(
       future: getSubmission(data, context),
       builder: (context, _) => hide
           ? Container()
           : GestureDetector(
-              onTap: () => Navigator.pushNamed(
+              onTap: widget.isTeacher ? null : () => Navigator.pushNamed(
                   context, SubmissionScreen.routeName,
                   arguments: [data, submission, user]),
               child: Card(
