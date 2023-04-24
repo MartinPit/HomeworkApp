@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:homework_app/models/subjects.dart';
 import 'package:intl/intl.dart';
 
@@ -35,6 +38,37 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     _fileName = (result.files.single.path)!.split('/').last;
   }
 
+  void _downloadFile(String url) async {
+    FlutterDownloader.registerCallback(downloadCallback);
+
+    @pragma('vm:entry-point')
+    final taskId = await FlutterDownloader.enqueue(
+      url: url,
+      savedDir: '/storage/emulated/0/Download',
+      saveInPublicStorage: true,
+      showNotification: true,
+      // show download progress in status bar (for Android)
+      openFileFromNotification:
+          true, // click on notification to open downloaded file (for Android)
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Súbor bude uložený v priečinku "Downloads"'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    // print(
+    //     'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
+
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([id, status, progress]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +82,9 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
         actions: [
           IconButton(
             onPressed: _pickFile,
-            icon: _selectedFile != null ? const Icon(Icons.file_download_done) :const Icon(Icons.attach_file),
+            icon: _selectedFile != null
+                ? const Icon(Icons.file_download_done)
+                : const Icon(Icons.attach_file),
           ),
         ],
       ),
@@ -80,7 +116,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
               Container(
                 alignment: Alignment.centerRight,
                 child: FilledButton.tonalIcon(
-                  onPressed: () {},
+                  onPressed: () => _downloadFile(data.attachmentUrl),
                   icon: const Icon(Icons.file_download_outlined),
                   label: const Text('Stiahnuť zadanie'),
                 ),
@@ -95,7 +131,10 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
                 child: Container(
                   height: 200,
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Theme.of(context).colorScheme.surfaceVariant,),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                  ),
                   child: TextFormField(
                     maxLines: 10,
                     decoration: const InputDecoration(

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:homework_app/models/student.dart';
 import 'package:homework_app/models/submissions.dart';
 import 'package:homework_app/screens/auth_screen.dart';
@@ -23,6 +24,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await FlutterDownloader.initialize(debug: false, ignoreSsl: false);
   runApp(const MyApp());
 }
 
