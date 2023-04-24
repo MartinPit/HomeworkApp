@@ -1,26 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart'
+    show QueryDocumentSnapshot, Timestamp;
 import 'package:flutter/cupertino.dart';
 
 import 'grade.dart';
 
 class Submission with ChangeNotifier {
-  final String id;
-  final String studentUCO;
-  final String studentName;
-  final String teacherUCO;
-  final String homeworkId;
-  final String attachmentUrl;
-  final String description;
-  final DateTime submittedAt = DateTime.now();
-  final Grade grade;
+  late final String id;
+  late final String studentUCO;
+  late final String studentName;
+  late final String studentSurname;
+  late final String teacherUCO;
+  late final String homeworkId;
+  late final String attachmentUrl;
+  late final String note;
+  late final DateTime submittedAt;
+  late final Grade grade;
 
   Submission({
     required this.id,
-    required this.studentName,
     required this.studentUCO,
-    required this.homeworkId,
+    required this.studentName,
+    required this.studentSurname,
     required this.teacherUCO,
+    required this.homeworkId,
     this.attachmentUrl = '',
-    this.description = '',
+    required this.note,
+    required this.submittedAt,
     this.grade = Grade.none,
   });
+
+  Submission.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
+    id = snapshot.id;
+
+    final data = snapshot.data();
+    studentUCO = data['studentUCO'];
+    studentName = data['studentName'];
+    studentSurname = data['studentSurname'];
+    teacherUCO = data['teacherUCO'];
+    homeworkId = data['homeworkId'];
+    attachmentUrl = data['attachmentUrl'];
+    note = data['note'];
+    submittedAt = (data['submittedAt'] as Timestamp).toDate();
+    grade = Grade.values
+        .firstWhere((element) => element.toEnglishString() == data['grade'], orElse: () => Grade.none);
+  }
 }

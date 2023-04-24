@@ -56,12 +56,15 @@ class _AddDialogState extends State<AddDialog> {
     });
 
     try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('homework_attachments')
-          .child(_fileName);
-      await ref.putFile(_selectedFile!);
-      final url = await ref.getDownloadURL();
+      String url = '';
+      if (_selectedFile != null) {
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('homework_attachments')
+            .child(_fileName);
+        await ref.putFile(_selectedFile!);
+        url = await ref.getDownloadURL();
+      }
 
       await FirebaseFirestore.instance.collection('homeworks').add({
         'title': _title,
