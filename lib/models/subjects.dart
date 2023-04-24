@@ -1,12 +1,13 @@
 enum Subject {
   English,
-  Math,
+  Maths,
   Science,
   SocialStudies,
   Language,
   Art,
   Music,
   PE,
+  Chemistry,
   Assembly,
   Low_Level_Programming,
 }
@@ -16,13 +17,12 @@ extension Stringifier on Subject {
     return toString().split('.').last;
   }
 
-
   Subject fromString(String str) {
     switch (str) {
       case 'English':
         return Subject.English;
       case 'Math':
-        return Subject.Math;
+        return Subject.Maths;
       case 'Science':
         return Subject.Science;
       case 'SocialStudies':
@@ -35,6 +35,8 @@ extension Stringifier on Subject {
         return Subject.Music;
       case 'PE':
         return Subject.PE;
+      case 'Chemistry':
+        return Subject.Chemistry;
       case 'Assembly':
         return Subject.Assembly;
       case 'Low_Level_Programming':

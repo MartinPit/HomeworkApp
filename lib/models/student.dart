@@ -9,13 +9,15 @@ class Student extends User with ChangeNotifier {
 
   Class get class_ => _class!;
 
-  Student.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot) : super.fromSnapshot(snapshot) {
-    _class = Class.values.firstWhere((element) => element.toEnglishString() == snapshot['class']);
+  Student.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snapshot)
+      : super.fromSnapshot(snapshot) {
+    _class = Class.values.firstWhere(
+        (element) => element.toEnglishString() == snapshot['class']);
     notifyListeners();
   }
 
   void clear() {
-super.clear();
+    super.clear();
     _class = null;
     notifyListeners();
   }
