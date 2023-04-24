@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:homework_app/widgets/home/submission_tile.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/submissions.dart';
@@ -104,7 +105,7 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
                 itemBuilder: (context, index) =>
                     ChangeNotifierProvider.value(
                         value: _submissions[index],
-                        child: const HomeworkTile(isHomework: false)),
+                        child: const SubmissionTile()),
                 itemCount: _submissions.length),
           ),
         ],

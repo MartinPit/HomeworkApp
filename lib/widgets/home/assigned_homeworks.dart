@@ -91,9 +91,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                     ChangeNotifierProvider<Homework>(
                   create: (context) =>
                       Homework.fromDoc(snapshot.data!.docs[index]),
-                  child: const HomeworkTile(
-                    isHomework: true,
-                  ),
+                  child: const HomeworkTile(isTeacher: true),
                 ),
                 itemCount: snapshot.data!.docs.length,
               );

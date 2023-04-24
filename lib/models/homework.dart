@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart' show QueryDocumentSnapshot, Timestamp;
 import 'package:flutter/foundation.dart';
 import 'package:homework_app/models/subjects.dart';
-import 'package:homework_app/models/submission.dart';
 
 import 'classes.dart';
 

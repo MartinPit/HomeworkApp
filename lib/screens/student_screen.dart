@@ -1,10 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_app/models/classes.dart';
 import 'package:homework_app/models/homeworks.dart';
 import 'package:homework_app/widgets/home/dropdown_chip.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
 import 'package:provider/provider.dart';
 
+import '../models/homework.dart';
 import '../models/student.dart';
+import '../models/subjects.dart';
+import '../utils.dart';
 import '../widgets/home/homework_tile.dart';
 
 class StudentScreen extends StatefulWidget {
@@ -17,8 +22,8 @@ class StudentScreen extends StatefulWidget {
 class _StudentScreenState extends State<StudentScreen> {
   late final Student user;
   bool _submittedSelected = false;
-  bool _dateSelected = false;
-  bool _subjectSelected = false;
+  DateTime? _dateFilter;
+  Subject? _subjectFilter;
   bool _scoredSelected = false;
 
   @override
@@ -27,9 +32,23 @@ class _StudentScreenState extends State<StudentScreen> {
     user = Provider.of<Student>(context, listen: false);
   }
 
+  void _dateHandler() {
+    showDatePicker(
+      context: context,
+      initialDate: _dateFilter == null ? DateTime.now() : _dateFilter!,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    ).then((value) {
+      setState(() => _dateFilter = value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final homeworkList = Provider.of<Homeworks>(context).homeworks.where((element) => element.className == user.class_).toList();
+    final homeworkList = Provider.of<Homeworks>(context)
+        .homeworks
+        .where((element) => element.className == user.class_)
+        .toList();
     return Scaffold(
       appBar: const HomeAppBar(title: 'Úlohy', isStudent: true),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -45,10 +64,20 @@ class _StudentScreenState extends State<StudentScreen> {
                 scrollDirection: Axis.horizontal,
                 clipBehavior: Clip.none,
                 children: [
-                  DropdownFilterChip<String>(
-                      label: const Text('Predmet'),
-                      items: const [DropdownMenuItem(child: Text('yo'))],
-                      onChanged: (_) {}),
+                  DropdownFilterChip(
+                    label: const Text('Predmet'),
+                    items: Utils.createSubjectsList(user.subjects),
+                    onChanged: (value) {
+                      setState(() {
+                        _subjectFilter = value as Subject?;
+                      });
+                    },
+                    selected: _subjectFilter != null,
+                    dropdownOffset: _subjectFilter != null
+                        ? const Offset(-106, 0)
+                        : const Offset(-88, 0),
+                    dropdownWidth: _subjectFilter != null ? 122 : 105,
+                  ),
                   const SizedBox(width: 7),
                   FilterChip(
                       label: const Text('Odovzdané'),
@@ -61,28 +90,14 @@ class _StudentScreenState extends State<StudentScreen> {
                   const SizedBox(width: 7),
                   InputChip(
                     label: const Text('Dátum'),
-                    avatar: _dateSelected
+                    avatar: _dateFilter != null
                         ? null
                         : Icon(
                             Icons.today,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
-                    onPressed: !_dateSelected
-                        ? () async {
-                            await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime.now()
-                                  .subtract(const Duration(days: 365)),
-                              lastDate:
-                                  DateTime.now().add(const Duration(days: 365)),
-                            );
-                            setState(
-                              () => _dateSelected = true,
-                            );
-                          }
-                        : () => setState(() => _dateSelected = false),
-                    selected: _dateSelected,
+                    onPressed: _dateHandler,
+                    selected: _dateFilter != null,
                   ),
                   const SizedBox(width: 7),
                   FilterChip(
@@ -95,13 +110,33 @@ class _StudentScreenState extends State<StudentScreen> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: ListView.builder(
-                itemBuilder: (context, index) => ChangeNotifierProvider.value(
-                    value: homeworkList[index],
-                    child: const HomeworkTile(isHomework: true)),
-                itemCount: homeworkList.length,
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('homeworks')
+                    .where('className',
+                        isEqualTo: user.class_.toEnglishString())
+                    .where('subject',
+                        isEqualTo: _subjectFilter?.toEnglishString())
+                    .where('deadline', isEqualTo: _dateFilter)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) =>
+                        ChangeNotifierProvider<Homework>(
+                      create: (context) =>
+                          Homework.fromDoc(snapshot.data!.docs[index]),
+                      child: HomeworkTile(scoredSelected: _scoredSelected, submittedSelected: _submittedSelected),
+                    ),
+                  );
+                },
               ),
-            )
+            ),
           ],
         ),
       ),
