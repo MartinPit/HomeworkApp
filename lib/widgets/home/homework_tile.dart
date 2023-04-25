@@ -77,7 +77,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
                   ? null
                   : () => Navigator.pushNamed(
                       context, SubmissionScreen.routeName,
-                      arguments: [data, submission, user]),
+                      arguments: [data, submission, user, widget.refresh]),
               child: Card(
                 margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                 child: Padding(

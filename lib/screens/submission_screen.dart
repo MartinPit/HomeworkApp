@@ -45,7 +45,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     _fileName = (result.files.single.path)!.split('/').last;
   }
 
-  void _submitForm(Homework homework, Submission? submission, Student user) async {
+  Future<void> _submitForm(Homework homework, Submission? submission, Student user) async {
     _formKey.currentState!.save();
 
     setState(() => _isLoading = true);
@@ -95,7 +95,6 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     } catch (e) {}
 
     setState(() => _isLoading = false);
-    Navigator.of(context).pop();
   }
 
   void _downloadFile(String url) async {
@@ -136,7 +135,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     final Homework data = options[0];
     final Submission? submission = options[1];
     final Student user = options[2];
-    print(submission.toString());
+    final void Function() refresh = options[3];
 
     return Scaffold(
       appBar: AppBar(
@@ -225,7 +224,11 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
         child: _isLoading
             ? const CircularProgressIndicator()
             : FloatingActionButton.extended(
-                onPressed: () => _submitForm(data, submission, user),
+                onPressed: () async {
+                  await _submitForm(data, submission, user);
+                  refresh();
+                  Navigator.of(context).pop();
+                },
                 label: const Text('Odovzdať'),
                 icon: const Icon(Icons.check),
               ),

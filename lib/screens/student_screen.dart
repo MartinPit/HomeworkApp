@@ -42,6 +42,10 @@ class _StudentScreenState extends State<StudentScreen> {
     });
   }
 
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +130,7 @@ class _StudentScreenState extends State<StudentScreen> {
                         ChangeNotifierProvider<Homework>(
                       create: (context) =>
                           Homework.fromDoc(snapshot.data!.docs[index]),
-                      child: HomeworkTile(scoredSelected: _scoredSelected, submittedSelected: _submittedSelected),
+                      child: HomeworkTile(scoredSelected: _scoredSelected, submittedSelected: _submittedSelected, refresh: refresh,),
                     ),
                   );
                 },
