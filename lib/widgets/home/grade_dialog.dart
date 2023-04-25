@@ -18,13 +18,6 @@ class _GradeDialogState extends State<GradeDialog> {
   String _grade = 'FX';
   double _value = 0.0;
 
-  void setGrade(Grade? grade) {
-    if (grade == null) {
-      return;
-    }
-    setState(() => grade.toEnglishString());
-  }
-
   void changeGrade(double value) {
     setState(() {
       _value = value;
@@ -77,7 +70,7 @@ class _GradeDialogState extends State<GradeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    setGrade(widget.submission.grade);
+    setState(() => widget.submission.grade.toEnglishString());
 
     return AlertDialog(
       icon: const Icon(Icons.verified),

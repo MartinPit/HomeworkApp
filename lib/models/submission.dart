@@ -14,7 +14,7 @@ class Submission with ChangeNotifier {
   late final String attachmentUrl;
   late final String note;
   late final DateTime submittedAt;
-  late final Grade? grade;
+  late final Grade grade;
 
   Submission({
     required this.id,
@@ -26,7 +26,7 @@ class Submission with ChangeNotifier {
     this.attachmentUrl = '',
     required this.note,
     required this.submittedAt,
-    this.grade,
+    this.grade = Grade.none,
   });
 
   Submission.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -41,9 +41,7 @@ class Submission with ChangeNotifier {
     attachmentUrl = data['attachmentUrl'];
     note = data['note'];
     submittedAt = (data['submittedAt'] as Timestamp).toDate();
-
-    Grade? temp = Grade.values
+    grade = Grade.values
         .firstWhere((element) => element.toEnglishString() == data['grade'], orElse: () => Grade.none);
-    grade = temp == Grade.none ? null : temp;
   }
 }

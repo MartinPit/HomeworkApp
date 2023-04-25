@@ -35,8 +35,6 @@ class GradingScreen extends StatelessWidget {
 
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
-    // print(
-    //     'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
 
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;

@@ -80,9 +80,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
         'studentName': user.name,
         'studentSurname': user.surname,
         'teacherUCO': homework.teacherUCO,
-        'grade': submission?.grade == null
-            ? null
-            : submission!.grade!.toEnglishString(),
+        'grade': submission == null ? Grade.none.toEnglishString() : submission.grade,
       };
 
       if (submission == null) {

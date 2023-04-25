@@ -4,7 +4,10 @@ import 'package:homework_app/models/submission.dart';
 import 'package:homework_app/widgets/home/submission_tile.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/classes.dart';
+import '../../models/subjects.dart';
 import '../../models/teacher.dart';
+import '../../utils.dart';
 import 'dropdown_chip.dart';
 
 class SubmittedHomeworks extends StatefulWidget {
@@ -18,7 +21,9 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
   final _controller = TextEditingController();
   late final Teacher user;
   bool _isEmpty = true;
-  bool _markedSelected = false;
+  bool _gradedSelected = false;
+  String? _subjectFilter;
+  String? _classFilter;
 
   @override
   void initState() {
@@ -36,6 +41,16 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
 
   void refresh() {
     setState(() {});
+  }
+
+  void subjectHandler(dynamic subject) {
+    setState(() => _subjectFilter =
+        subject == null ? null : (subject as Subject).toEnglishString());
+  }
+
+  void classHandler(dynamic class_) {
+    setState(() => _classFilter =
+        class_ == null ? null : (class_ as Class).toEnglishString());
   }
 
   @override
@@ -77,22 +92,32 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
                     clipBehavior: Clip.none,
                     children: [
                       DropdownFilterChip(
-                          label: const Text('Predmet'),
-                          items: const [DropdownMenuItem(child: Text('yup'))],
-                          onChanged: (_) {}),
+                        label: const Text('Predmet'),
+                        items: Utils.createSubjectsList(user.subjects),
+                        onChanged: subjectHandler,
+                        selected: _subjectFilter != null,
+                        dropdownWidth: _subjectFilter != null ? 122 : 105,
+                        dropdownOffset: _subjectFilter != null
+                            ? const Offset(-106, 0)
+                            : const Offset(-88, 0),
+                      ),
                       const SizedBox(width: 7),
                       DropdownFilterChip(
-                          label: const Text('Trieda'),
-                          items: const [DropdownMenuItem(child: Text('yup'))],
-                          onChanged: (_) {},
-                          dropdownWidth: 90,
-                          dropdownOffset: const Offset(-73, 0)),
+                        label: const Text('Trieda'),
+                        items: Utils.createClassList(user.classes),
+                        onChanged: classHandler,
+                        dropdownWidth: _classFilter != null ? 108 : 90,
+                        dropdownOffset: _classFilter != null
+                            ? const Offset(-92, 0)
+                            : const Offset(-73, 0),
+                        selected: _classFilter != null,
+                      ),
                       const SizedBox(width: 7),
                       FilterChip(
                         label: const Text('Ohodnotené'),
                         onSelected: (_) =>
-                            setState(() => _markedSelected = !_markedSelected),
-                        selected: _markedSelected,
+                            setState(() => _gradedSelected = !_gradedSelected),
+                        selected: _gradedSelected,
                       ),
                     ],
                   ),
@@ -105,18 +130,19 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
             child: StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection('submissions')
+                  .where('teacherUCO', isEqualTo: user.uco)
+                  .where('grade', whereIn: _gradedSelected ? ['A', 'B', 'C', 'D', 'E', 'FX'] : ['A', 'B', 'C', 'D', 'E', 'FX', ''])
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-
                 return ListView.builder(
                   itemBuilder: (context, index) => ChangeNotifierProvider(
                     create: (_) =>
                         Submission.fromDoc(snapshot.data!.docs[index]),
-                    child: SubmissionTile(refresh: refresh),
+                    child: SubmissionTile(refresh: refresh, class_: _classFilter, subject: _subjectFilter, title: _controller.text),
                   ),
                   itemCount: snapshot.data!.docs.length,
                 );

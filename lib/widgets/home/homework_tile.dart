@@ -48,7 +48,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
     final result = response.docs.isEmpty ? null : response.docs.first;
 
-    if (widget.scoredSelected && (result == null || result['grade'] == null)) {
+    if (widget.scoredSelected && (result == null || result['grade'] == '')) {
       hide = true;
     }
 
@@ -129,10 +129,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
                                 child: submission == null
                                     ? const Text('')
                                     : Text(
-                                        (submission == null ||
-                                                submission!.grade == null)
+                                        (submission == null)
                                             ? ''
-                                            : submission!.grade!
+                                            : submission!.grade
                                                 .toEnglishString(),
                                         style: Theme.of(context)
                                             .textTheme

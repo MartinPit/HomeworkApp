@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart' show QueryDocumentSnapshot, Timestamp;
+import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, Timestamp;
 import 'package:flutter/foundation.dart';
 import 'package:homework_app/models/subjects.dart';
 
@@ -25,12 +25,12 @@ class Homework with ChangeNotifier {
     this.attachmentUrl = '',
   });
 
-  Homework.fromDoc(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+  Homework.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
     id = doc.id;
 
     final data = doc.data();
 
-    title = data['title'];
+    title = data!['title'];
     description = data['description'];
     deadline = (data['deadline'] as Timestamp).toDate();
     subject = Subject.values.firstWhere((element) => element.toEnglishString() == data['subject']);

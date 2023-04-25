@@ -10,6 +10,7 @@ enum Grade {
 
 extension Stringifier on Grade {
   String toEnglishString() {
-    return toString().split('.').last;
+    String result = toString().split('.').last;
+    return result == 'none' ? '' : result;
   }
 }

@@ -34,7 +34,6 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
   }
 
   void classHandler(dynamic class_) {
-    // print((class_ as Class).toEnglishString());
     setState(() => classFilter =
         class_ == null ? null : (class_ as Class).toEnglishString());
   }
@@ -72,7 +71,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                   dropdownOffset: classFilter != null
                       ? const Offset(-92, 0)
                       : const Offset(-73, 0),
-                  selected: classFilter != null),
+                  selected: classFilter != null,),
             ],
           ),
         ),
