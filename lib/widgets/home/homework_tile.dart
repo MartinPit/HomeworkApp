@@ -130,9 +130,9 @@ class _HomeworkTileState extends State<HomeworkTile> {
                                     ? const Text('')
                                     : Text(
                                         (submission == null ||
-                                                submission!.grade == Grade.none)
+                                                submission!.grade == null)
                                             ? ''
-                                            : submission!.grade
+                                            : submission!.grade!
                                                 .toEnglishString(),
                                         style: Theme.of(context)
                                             .textTheme

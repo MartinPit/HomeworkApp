@@ -6,16 +6,24 @@ import '../../models/grade.dart';
 import '../../models/submission.dart';
 
 class SubmissionTile extends StatelessWidget {
-  const SubmissionTile({Key? key}) : super(key: key);
+  final void Function()? refresh;
+
+  const SubmissionTile({Key? key, this.refresh}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<Submission>(context);
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed(
-        '/grading_screen',
-        arguments: data,
-      ),
+      onTap: () async {
+        final result = await Navigator.of(context).pushNamed(
+          '/grading_screen',
+          arguments: data,
+        );
+
+        if (result != null) {
+          refresh?.call();
+        }
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: Padding(
@@ -49,9 +57,7 @@ class SubmissionTile extends StatelessWidget {
                 child: Container(
                   alignment: Alignment.centerRight,
                   child: Text(
-                      data.grade != Grade.none
-                          ? data.grade.toEnglishString()
-                          : '',
+                      data.grade != null ? data.grade!.toEnglishString() : '',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Theme.of(context).colorScheme.error)),
                 ),

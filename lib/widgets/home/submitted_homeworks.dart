@@ -34,6 +34,10 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
     super.dispose();
   }
 
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -112,7 +116,7 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
                   itemBuilder: (context, index) => ChangeNotifierProvider(
                     create: (_) =>
                         Submission.fromDoc(snapshot.data!.docs[index]),
-                    child: const SubmissionTile(),
+                    child: SubmissionTile(refresh: refresh),
                   ),
                   itemCount: snapshot.data!.docs.length,
                 );

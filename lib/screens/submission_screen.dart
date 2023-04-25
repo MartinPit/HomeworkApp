@@ -45,7 +45,8 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     _fileName = (result.files.single.path)!.split('/').last;
   }
 
-  Future<void> _submitForm(Homework homework, Submission? submission, Student user) async {
+  Future<void> _submitForm(
+      Homework homework, Submission? submission, Student user) async {
     _formKey.currentState!.save();
 
     setState(() => _isLoading = true);
@@ -54,9 +55,10 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
       String url = '';
       if (_selectedFile != null) {
         if (submission != null && submission.attachmentUrl != '') {
-          FirebaseStorage.instance.refFromURL(submission.attachmentUrl).delete();
+          FirebaseStorage.instance
+              .refFromURL(submission.attachmentUrl)
+              .delete();
         }
-
 
         final ref = FirebaseStorage.instance
             .ref()
@@ -78,7 +80,9 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
         'studentName': user.name,
         'studentSurname': user.surname,
         'teacherUCO': homework.teacherUCO,
-        'grade': submission?.grade == null ? null : submission!.grade.toEnglishString(),
+        'grade': submission?.grade == null
+            ? null
+            : submission!.grade!.toEnglishString(),
       };
 
       if (submission == null) {
@@ -89,7 +93,6 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
             .doc(submission.id)
             .set(fields);
       }
-
     } on FirebaseException catch (e) {
       print(e.message);
     } catch (e) {}
@@ -101,14 +104,12 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
     FlutterDownloader.registerCallback(downloadCallback);
 
     @pragma('vm:entry-point')
-    final taskId = await FlutterDownloader.enqueue(
+    final _ = await FlutterDownloader.enqueue(
       url: url,
       savedDir: '/storage/emulated/0/Download',
       saveInPublicStorage: true,
       showNotification: true,
-      // show download progress in status bar (for Android)
-      openFileFromNotification:
-          true, // click on notification to open downloaded file (for Android)
+      openFileFromNotification: true,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
