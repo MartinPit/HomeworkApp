@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_app/screens/submission_screen.dart';
+import 'package:homework_app/widgets/home/add_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -14,9 +15,11 @@ class HomeworkTile extends StatefulWidget {
   final bool submittedSelected;
   final bool scoredSelected;
   final bool isTeacher;
+  final Function? refresh;
 
   const HomeworkTile(
       {Key? key,
+      this.refresh,
       this.isTeacher = false,
       this.scoredSelected = false,
       this.submittedSelected = false})
@@ -45,8 +48,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
 
     final result = response.docs.isEmpty ? null : response.docs.first;
 
-    if (widget.scoredSelected &&
-        (result == null || result['grade'] == null)) {
+    if (widget.scoredSelected && (result == null || result['grade'] == null)) {
       hide = true;
     }
 
@@ -71,9 +73,20 @@ class _HomeworkTileState extends State<HomeworkTile> {
       builder: (context, _) => hide
           ? Container()
           : GestureDetector(
-              onTap: widget.isTeacher ? null : () => Navigator.pushNamed(
-                  context, SubmissionScreen.routeName,
-                  arguments: [data, submission, user]),
+              onTap: widget.isTeacher
+                  ? () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) => AddDialog(
+                          user: user,
+                          homework: data,
+                        ),
+                      );
+                    widget.refresh!();
+                  }
+                  : () => Navigator.pushNamed(
+                      context, SubmissionScreen.routeName,
+                      arguments: [data, submission, user]),
               child: Card(
                 margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                 child: Padding(
@@ -109,7 +122,11 @@ class _HomeworkTileState extends State<HomeworkTile> {
                           alignment: Alignment.centerRight,
                           child: submission == null
                               ? const Text('')
-                              : Text((submission == null || submission!.grade == Grade.none) ? '' : submission!.grade.toEnglishString(),
+                              : Text(
+                                  (submission == null ||
+                                          submission!.grade == Grade.none)
+                                      ? ''
+                                      : submission!.grade.toEnglishString(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!

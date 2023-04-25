@@ -39,6 +39,10 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
         class_ == null ? null : (class_ as Class).toEnglishString());
   }
 
+  void refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -91,7 +95,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                     ChangeNotifierProvider<Homework>(
                   create: (context) =>
                       Homework.fromDoc(snapshot.data!.docs[index]),
-                  child: const HomeworkTile(isTeacher: true),
+                  child: HomeworkTile(isTeacher: true, refresh: refresh),
                 ),
                 itemCount: snapshot.data!.docs.length,
               );

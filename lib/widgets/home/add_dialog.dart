@@ -7,14 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:homework_app/widgets/home/dropdown_chip.dart';
 
 import '../../models/classes.dart';
+import '../../models/homework.dart';
 import '../../models/subjects.dart';
 import '../../models/teacher.dart';
 import '../../utils.dart';
 
 class AddDialog extends StatefulWidget {
   final Teacher user;
+  final Homework? homework;
 
-  const AddDialog({Key? key, required this.user}) : super(key: key);
+  const AddDialog({Key? key, required this.user, this.homework}) : super(key: key);
 
   @override
   State<AddDialog> createState() => _AddDialogState();
@@ -56,6 +58,11 @@ class _AddDialogState extends State<AddDialog> {
     });
 
     try {
+      if (widget.homework != null && widget.homework!.attachmentUrl != '') {
+        FirebaseStorage.instance
+            .refFromURL(widget.homework!.attachmentUrl).delete();
+      }
+
       String url = '';
       if (_selectedFile != null) {
         final ref = FirebaseStorage.instance
@@ -66,7 +73,7 @@ class _AddDialogState extends State<AddDialog> {
         url = await ref.getDownloadURL();
       }
 
-      await FirebaseFirestore.instance.collection('homeworks').add({
+      final fields = {
         'title': _title,
         'description': _description,
         'deadline': Timestamp.fromDate(_selectedDate!),
@@ -74,7 +81,20 @@ class _AddDialogState extends State<AddDialog> {
         'className': _selectedClass!.toEnglishString(),
         'attachmentUrl': url,
         'teacherUCO': widget.user.uco,
-      });
+      };
+
+      if (widget.homework != null) {
+        await FirebaseFirestore.instance
+            .collection('homeworks')
+            .doc(widget.homework!.id)
+            .set(fields);
+      } else {
+        await FirebaseFirestore.instance
+            .collection('homeworks')
+            .add(fields);
+      }
+
+
     } on FirebaseException catch (e) {
       setState(() {
         _isLoading = false;
@@ -127,8 +147,22 @@ class _AddDialogState extends State<AddDialog> {
     _fileName = (result.files.single.path)!.split('/').last;
   }
 
+  void initFromHomework(Homework? homework) {
+    if (homework == null) {
+      return;
+    }
+    setState(() {
+      _selectedDate = homework.deadline;
+      _selectedSubject = homework.subject;
+      _selectedClass = homework.className;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    initFromHomework(widget.homework);
+
+
     return Center(
       child: SingleChildScrollView(
         child: AlertDialog(
@@ -158,6 +192,7 @@ class _AddDialogState extends State<AddDialog> {
                     }
                     return null;
                   },
+                  initialValue: widget.homework?.title,
                   onSaved: (value) => _title = value!,
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
@@ -174,6 +209,7 @@ class _AddDialogState extends State<AddDialog> {
                     }
                     return null;
                   },
+                  initialValue: widget.homework?.description,
                   onSaved: (value) => _description = value!,
                   textInputAction: TextInputAction.newline,
                   textCapitalization: TextCapitalization.sentences,
