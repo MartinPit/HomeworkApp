@@ -12,6 +12,7 @@ import 'package:homework_app/screens/submission_screen.dart';
 import 'package:homework_app/screens/teacher_screen.dart';
 import 'package:homework_app/screens/student_screen.dart';
 import 'package:homework_app/screens/profile_screen.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -22,6 +23,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await FlutterDownloader.initialize(debug: false, ignoreSsl: false);
   runApp(const MyApp());

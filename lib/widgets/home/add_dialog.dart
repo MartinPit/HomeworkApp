@@ -169,7 +169,7 @@ class _AddDialogState extends State<AddDialog> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Nová úloha'),
+              Text(widget.homework != null ? 'Upraviť úlohu' : 'Nová úloha'),
               IconButton(
                 onPressed: _getDate,
                 icon: AnimatedSwitcher(
