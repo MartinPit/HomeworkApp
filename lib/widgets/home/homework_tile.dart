@@ -74,16 +74,7 @@ class _HomeworkTileState extends State<HomeworkTile> {
           ? Container()
           : GestureDetector(
               onTap: widget.isTeacher
-                  ? () async {
-                    await showDialog(
-                        context: context,
-                        builder: (context) => AddDialog(
-                          user: user,
-                          homework: data,
-                        ),
-                      );
-                    widget.refresh!();
-                  }
+                  ? null
                   : () => Navigator.pushNamed(
                       context, SubmissionScreen.routeName,
                       arguments: [data, submission, user]),
@@ -118,23 +109,39 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         ],
                       ),
                       Expanded(
-                        child: Container(
-                          alignment: Alignment.centerRight,
-                          child: submission == null
-                              ? const Text('')
-                              : Text(
-                                  (submission == null ||
-                                          submission!.grade == Grade.none)
-                                      ? ''
-                                      : submission!.grade.toEnglishString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error)),
-                        ),
+                        child: widget.isTeacher
+                            ? Container(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                    onPressed: () async {
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) => AddDialog(
+                                          user: user,
+                                          homework: data,
+                                        ),
+                                      );
+                                      widget.refresh!();
+                                    },
+                                    icon: const Icon(Icons.mode_edit_outlined)))
+                            : Container(
+                                alignment: Alignment.centerRight,
+                                child: submission == null
+                                    ? const Text('')
+                                    : Text(
+                                        (submission == null ||
+                                                submission!.grade == Grade.none)
+                                            ? ''
+                                            : submission!.grade
+                                                .toEnglishString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .error)),
+                              ),
                       ),
                     ],
                   ),

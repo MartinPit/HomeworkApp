@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:homework_app/models/classes.dart';
-import 'package:homework_app/models/homeworks.dart';
 import 'package:homework_app/widgets/home/dropdown_chip.dart';
 import 'package:homework_app/widgets/home/home_app_bar.dart';
 import 'package:provider/provider.dart';
@@ -45,10 +44,6 @@ class _StudentScreenState extends State<StudentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final homeworkList = Provider.of<Homeworks>(context)
-        .homeworks
-        .where((element) => element.className == user.class_)
-        .toList();
     return Scaffold(
       appBar: const HomeAppBar(title: 'Úlohy', isStudent: true),
       backgroundColor: Theme.of(context).colorScheme.surface,

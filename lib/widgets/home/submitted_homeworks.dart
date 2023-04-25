@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:homework_app/models/submission.dart';
 import 'package:homework_app/widgets/home/submission_tile.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/submissions.dart';
 import '../../models/teacher.dart';
 import 'dropdown_chip.dart';
-import 'homework_tile.dart';
 
 class SubmittedHomeworks extends StatefulWidget {
   const SubmittedHomeworks({Key? key}) : super(key: key);
@@ -36,10 +36,6 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
 
   @override
   Widget build(BuildContext context) {
-    final _submissions = Provider.of<Submissions>(context)
-        .submissions
-        .where((element) => element.teacherUCO == user.uco)
-        .toList();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       behavior: HitTestBehavior.translucent,
@@ -85,7 +81,8 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
                           label: const Text('Trieda'),
                           items: const [DropdownMenuItem(child: Text('yup'))],
                           onChanged: (_) {},
-                          dropdownWidth: 90, dropdownOffset: const Offset(-73, 0)),
+                          dropdownWidth: 90,
+                          dropdownOffset: const Offset(-73, 0)),
                       const SizedBox(width: 7),
                       FilterChip(
                         label: const Text('Ohodnotené'),
@@ -101,12 +98,26 @@ class _SubmittedHomeworksState extends State<SubmittedHomeworks> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-                itemBuilder: (context, index) =>
-                    ChangeNotifierProvider.value(
-                        value: _submissions[index],
-                        child: const SubmissionTile()),
-                itemCount: _submissions.length),
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('submissions')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return ListView.builder(
+                  itemBuilder: (context, index) => ChangeNotifierProvider(
+                    create: (_) =>
+                        Submission.fromDoc(snapshot.data!.docs[index]),
+                    child: const SubmissionTile(),
+                  ),
+                  itemCount: snapshot.data!.docs.length,
+                );
+              },
+            ),
           ),
         ],
       ),

@@ -12,6 +12,10 @@ class SubmissionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = Provider.of<Submission>(context);
     return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed(
+        '/grading_screen',
+        arguments: data,
+      ),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
         child: Padding(
@@ -34,18 +38,20 @@ class SubmissionTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(data.studentName,
+                  Text('${data.studentName} ${data.studentSurname}',
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 5),
-                  Text(
-                      DateFormat('d. MMMM y').format(data.submittedAt),
+                  Text(DateFormat('d. MMMM y').format(data.submittedAt),
                       style: Theme.of(context).textTheme.labelSmall),
                 ],
               ),
               Expanded(
                 child: Container(
                   alignment: Alignment.centerRight,
-                  child: Text(data.grade != Grade.none ? data.grade.toString() : '',
+                  child: Text(
+                      data.grade != Grade.none
+                          ? data.grade.toEnglishString()
+                          : '',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Theme.of(context).colorScheme.error)),
                 ),

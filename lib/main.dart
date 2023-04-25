@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:homework_app/models/student.dart';
-import 'package:homework_app/models/submissions.dart';
 import 'package:homework_app/screens/auth_screen.dart';
+import 'package:homework_app/screens/grading_screen.dart';
 import 'package:homework_app/screens/submission_screen.dart';
 import 'package:homework_app/screens/teacher_screen.dart';
 import 'package:homework_app/screens/student_screen.dart';
@@ -15,7 +15,6 @@ import 'package:homework_app/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
-import 'models/homeworks.dart';
 import 'models/teacher.dart';
 
 void main() async {
@@ -175,12 +174,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => Homeworks()),
-        ChangeNotifierProvider(create: (context) => Submissions()),
-      ],
-      child: DynamicColorBuilder(
+    return DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
           return MaterialApp(
             title: 'HomeworkApp',
@@ -239,10 +233,10 @@ class MyApp extends StatelessWidget {
             routes: {
               ProfileScreen.routeName: (context) => const ProfileScreen(),
               SubmissionScreen.routeName: (context) => const SubmissionScreen(),
+              GradingScreen.routeName: (context) => const GradingScreen(),
             },
           );
         },
-      ),
     );
   }
 }
