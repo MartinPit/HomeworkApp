@@ -46,7 +46,8 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
     FirebaseFirestore.instance
         .collection('homeworks')
         .doc(id)
-        .delete().catchError((error) => ScaffoldMessenger.of(ctx).showSnackBar(
+        .delete()
+        .catchError((error) => ScaffoldMessenger.of(ctx).showSnackBar(
             SnackBar(content: Text('Nepodarilo sa vymazať úlohu'))));
 
     FirebaseFirestore.instance
@@ -58,8 +59,8 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
         element.reference.delete();
       }
     }).catchError((error) {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text('Nepodarilo sa vymazať úlohu')));
+      ScaffoldMessenger.of(ctx)
+          .showSnackBar(SnackBar(content: Text('Nepodarilo sa vymazať úlohu')));
     });
   }
 
@@ -120,6 +121,24 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                     child: Dismissible(
                       onDismissed: (direction) => _deleteHomework(
                           context, snapshot.data!.docs[index].id),
+                      confirmDismiss: (_) async => await showDialog(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Vymazať úlohu?'),
+                          content: const Text(
+                              'Naozaj si prajete vymazať túto úlohu?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Nie'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Áno'),
+                            ),
+                          ],
+                        ),
+                      ),
                       secondaryBackground: Card(
                         color: Theme.of(context).colorScheme.errorContainer,
                         child: Align(
