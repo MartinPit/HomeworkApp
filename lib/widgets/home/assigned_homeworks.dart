@@ -42,6 +42,27 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
     setState(() {});
   }
 
+  void _deleteHomework(BuildContext ctx, String id) async {
+    FirebaseFirestore.instance
+        .collection('homeworks')
+        .doc(id)
+        .delete().catchError((error) => ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(content: Text('Nepodarilo sa vymazať úlohu'))));
+
+    FirebaseFirestore.instance
+        .collection('submissions')
+        .where('homeworkId', isEqualTo: id)
+        .get()
+        .then((value) {
+      for (var element in value.docs) {
+        element.reference.delete();
+      }
+    }).catchError((error) {
+      ScaffoldMessenger.of(ctx).showSnackBar(
+            SnackBar(content: Text('Nepodarilo sa vymazať úlohu')));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -64,14 +85,15 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
               ),
               const SizedBox(width: 7),
               DropdownFilterChip(
-                  label: const Text('Trieda'),
-                  items: Utils.createClassList(user.classes),
-                  onChanged: classHandler,
-                  dropdownWidth: classFilter != null ? 108 : 90,
-                  dropdownOffset: classFilter != null
-                      ? const Offset(-92, 0)
-                      : const Offset(-73, 0),
-                  selected: classFilter != null,),
+                label: const Text('Trieda'),
+                items: Utils.createClassList(user.classes),
+                onChanged: classHandler,
+                dropdownWidth: classFilter != null ? 108 : 90,
+                dropdownOffset: classFilter != null
+                    ? const Offset(-92, 0)
+                    : const Offset(-73, 0),
+                selected: classFilter != null,
+              ),
             ],
           ),
         ),
@@ -94,7 +116,30 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                     ChangeNotifierProvider<Homework>(
                   create: (context) =>
                       Homework.fromDoc(snapshot.data!.docs[index]),
-                  child: HomeworkTile(isTeacher: true, refresh: refresh),
+                  child: Container(
+                    child: Dismissible(
+                      onDismissed: (direction) => _deleteHomework(
+                          context, snapshot.data!.docs[index].id),
+                      secondaryBackground: Card(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: Icon(Icons.delete,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onErrorContainer),
+                          ),
+                        ),
+                      ),
+                      key: ValueKey(snapshot.data!.docs[index].id),
+                      background: Card(
+                          color: Theme.of(context).colorScheme.errorContainer),
+                      direction: DismissDirection.endToStart,
+                      child: HomeworkTile(isTeacher: true, refresh: refresh),
+                    ),
+                  ),
                 ),
                 itemCount: snapshot.data!.docs.length,
               );

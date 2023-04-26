@@ -1,5 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart' show DocumentSnapshot, Timestamp;
+import 'package:cloud_firestore/cloud_firestore.dart'
+    show DocumentSnapshot, FirebaseFirestore, Timestamp;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:homework_app/models/subjects.dart';
 
 import 'classes.dart';
@@ -33,8 +35,10 @@ class Homework with ChangeNotifier {
     title = data!['title'];
     description = data['description'];
     deadline = (data['deadline'] as Timestamp).toDate();
-    subject = Subject.values.firstWhere((element) => element.toEnglishString() == data['subject']);
-    className = Class.values.firstWhere((element) => element.toEnglishString() == data['className']);
+    subject = Subject.values
+        .firstWhere((element) => element.toEnglishString() == data['subject']);
+    className = Class.values.firstWhere(
+            (element) => element.toEnglishString() == data['className']);
     teacherUCO = data['teacherUCO'];
     attachmentUrl = data['attachmentUrl'];
   }
