@@ -3,6 +3,8 @@ import 'package:homework_app/models/classes.dart';
 
 import 'models/subjects.dart';
 
+const maxFileSize = 200 * 1024 * 1024;
+
 class Utils {
 
   static List<DropdownMenuItem> createClassList(List<Class> items) {
@@ -23,5 +25,9 @@ class Utils {
     }
 
     return result;
+  }
+
+  static bool isFileTooBig(int size) {
+    return size > maxFileSize;
   }
 }

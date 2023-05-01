@@ -98,15 +98,18 @@ class _HomeworkTileState extends State<HomeworkTile> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(data.title,
-                              style: Theme.of(context).textTheme.titleMedium),
-                          const SizedBox(height: 5),
-                          Text(DateFormat('d. MMMM y').format(data.deadline),
-                              style: Theme.of(context).textTheme.labelSmall),
-                        ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(data.title,
+                                style: Theme.of(context).textTheme.titleMedium, overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 5),
+                            Text(DateFormat('d. MMMM y').format(data.deadline),
+                                style: Theme.of(context).textTheme.labelSmall),
+                          ],
+                        ),
                       ),
                       Expanded(
                         child: widget.isTeacher

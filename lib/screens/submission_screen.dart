@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:homework_app/models/grade.dart';
 import 'package:homework_app/models/subjects.dart';
+import 'package:homework_app/utils.dart';
 import 'package:intl/intl.dart';
 
 import '../models/homework.dart';
@@ -53,7 +54,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
 
     try {
       String url = '';
-      if (_selectedFile != null) {
+      if (_selectedFile != null && Utils.isFileTooBig(_selectedFile!.lengthSync())) {
         if (submission != null && submission.attachmentUrl != '') {
           FirebaseStorage.instance
               .refFromURL(submission.attachmentUrl)
@@ -89,7 +90,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
         await FirebaseFirestore.instance
             .collection('submissions')
             .doc(submission.id)
-            .set(fields);
+            .update({'note': _note, 'attachmentUrl': url, 'submittedAt': DateTime.now()});
       }
     } on FirebaseException catch (e) {
       print(e.message);
@@ -202,7 +203,7 @@ class _SubmissionScreenState extends State<SubmissionScreen> {
                     ),
                     child: TextFormField(
                       initialValue: submission?.note,
-                      onSaved: (newValue) => _note = newValue!,
+                      onSaved: (newValue) => _note = newValue!.trim(),
                       maxLines: 5,
                       textCapitalization: TextCapitalization.sentences,
                       autocorrect: true,

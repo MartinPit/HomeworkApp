@@ -48,7 +48,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
         .doc(id)
         .delete()
         .catchError((error) => ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text('Nepodarilo sa vymazať úlohu'))));
+            const SnackBar(content: Text('Nepodarilo sa vymazať úlohu'))));
 
     FirebaseFirestore.instance
         .collection('submissions')
@@ -60,7 +60,7 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
       }
     }).catchError((error) {
       ScaffoldMessenger.of(ctx)
-          .showSnackBar(SnackBar(content: Text('Nepodarilo sa vymazať úlohu')));
+          .showSnackBar(const SnackBar(content: Text('Nepodarilo sa vymazať úlohu')));
     });
   }
 
@@ -117,47 +117,45 @@ class _AssignedHomeworksState extends State<AssignedHomeworks> {
                     ChangeNotifierProvider<Homework>(
                   create: (context) =>
                       Homework.fromDoc(snapshot.data!.docs[index]),
-                  child: Container(
-                    child: Dismissible(
-                      onDismissed: (direction) => _deleteHomework(
-                          context, snapshot.data!.docs[index].id),
-                      confirmDismiss: (_) async => await showDialog(
-                        context: context,
-                        builder: (BuildContext context) => AlertDialog(
-                          title: const Text('Vymazať úlohu?'),
-                          content: const Text(
-                              'Naozaj si prajete vymazať túto úlohu?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text('Nie'),
-                            ),
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              child: const Text('Áno'),
-                            ),
-                          ],
-                        ),
-                      ),
-                      secondaryBackground: Card(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 20),
-                            child: Icon(Icons.delete,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onErrorContainer),
+                  child: Dismissible(
+                    onDismissed: (direction) => _deleteHomework(
+                        context, snapshot.data!.docs[index].id),
+                    confirmDismiss: (_) async => await showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('Vymazať úlohu?'),
+                        content: const Text(
+                            'Naozaj si prajete vymazať túto úlohu?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Nie'),
                           ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Áno'),
+                          ),
+                        ],
+                      ),
+                    ),
+                    secondaryBackground: Card(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Icon(Icons.delete,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onErrorContainer),
                         ),
                       ),
-                      key: ValueKey(snapshot.data!.docs[index].id),
-                      background: Card(
-                          color: Theme.of(context).colorScheme.errorContainer),
-                      direction: DismissDirection.endToStart,
-                      child: HomeworkTile(isTeacher: true, refresh: refresh),
                     ),
+                    key: ValueKey(snapshot.data!.docs[index].id),
+                    background: Card(
+                        color: Theme.of(context).colorScheme.errorContainer),
+                    direction: DismissDirection.endToStart,
+                    child: HomeworkTile(isTeacher: true, refresh: refresh),
                   ),
                 ),
                 itemCount: snapshot.data!.docs.length,

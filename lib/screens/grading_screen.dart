@@ -80,12 +80,14 @@ class GradingScreen extends StatelessWidget {
             Container(
               height: 150,
               alignment: Alignment.topLeft,
-              child: Container(
-                  width: 250,
-                  child: Text(
-                    submission.note,
-                    style: Theme.of(context).textTheme.labelLarge,
-                  )),
+              child: SingleChildScrollView(
+                child: SizedBox(
+                    width: 300,
+                    child: Text(
+                      submission.note,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    )),
+              ),
             ),
             const SizedBox(height: 20),
             Container(

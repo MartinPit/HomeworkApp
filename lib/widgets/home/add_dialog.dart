@@ -16,7 +16,8 @@ class AddDialog extends StatefulWidget {
   final Teacher user;
   final Homework? homework;
 
-  const AddDialog({Key? key, required this.user, this.homework}) : super(key: key);
+  const AddDialog({Key? key, required this.user, this.homework})
+      : super(key: key);
 
   @override
   State<AddDialog> createState() => _AddDialogState();
@@ -34,6 +35,17 @@ class _AddDialogState extends State<AddDialog> {
   String _description = '';
   Widget? _error;
 
+  void resetFields() {
+    _selectedDate = null;
+    _selectedSubject = null;
+    _selectedClass = null;
+    _selectedFile = null;
+    _fileName = '';
+    _title = '';
+    _description = '';
+    _error = null;
+  }
+
   Future<void> _trySubmit() async {
     final isValid = _formKey.currentState!.validate();
     bool check = false;
@@ -46,6 +58,10 @@ class _AddDialogState extends State<AddDialog> {
             style: TextStyle(color: Theme.of(context).colorScheme.error));
       });
       check = true;
+    } else {
+      setState(() {
+        _error = null;
+      });
     }
 
     if (!isValid || check) {
@@ -60,11 +76,12 @@ class _AddDialogState extends State<AddDialog> {
     try {
       if (widget.homework != null && widget.homework!.attachmentUrl != '') {
         FirebaseStorage.instance
-            .refFromURL(widget.homework!.attachmentUrl).delete();
+            .refFromURL(widget.homework!.attachmentUrl)
+            .delete();
       }
 
       String url = '';
-      if (_selectedFile != null) {
+      if (_selectedFile != null && Utils.isFileTooBig(_selectedFile!.lengthSync())) {
         final ref = FirebaseStorage.instance
             .ref()
             .child('homework_attachments')
@@ -87,14 +104,10 @@ class _AddDialogState extends State<AddDialog> {
         await FirebaseFirestore.instance
             .collection('homeworks')
             .doc(widget.homework!.id)
-            .set(fields);
+            .update(fields);
       } else {
-        await FirebaseFirestore.instance
-            .collection('homeworks')
-            .add(fields);
+        await FirebaseFirestore.instance.collection('homeworks').add(fields);
       }
-
-
     } on FirebaseException catch (e) {
       setState(() {
         _isLoading = false;
@@ -108,6 +121,8 @@ class _AddDialogState extends State<AddDialog> {
           _isLoading = false;
         });
       }
+      _formKey.currentState!.reset();
+      resetFields();
       Navigator.of(context).pop();
     }
   }
@@ -162,7 +177,6 @@ class _AddDialogState extends State<AddDialog> {
   Widget build(BuildContext context) {
     initFromHomework(widget.homework);
 
-
     return Center(
       child: SingleChildScrollView(
         child: AlertDialog(
@@ -187,8 +201,13 @@ class _AddDialogState extends State<AddDialog> {
               children: [
                 TextFormField(
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (value == null || value.isEmpty || value.trim() == '') {
                       return 'Názov je povinný';
+                    }
+
+                    if (int.tryParse(value) != null ||
+                        double.tryParse(value) != null) {
+                      return 'Názov nemôže byť číslo';
                     }
                     return null;
                   },
@@ -204,8 +223,13 @@ class _AddDialogState extends State<AddDialog> {
                 const SizedBox(height: 10),
                 TextFormField(
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (value == null || value.isEmpty || value.trim() == '') {
                       return 'Popis je povinný';
+                    }
+
+                    if (int.tryParse(value) != null ||
+                        double.tryParse(value) != null) {
+                      return 'Popis nemôže byť číslo';
                     }
                     return null;
                   },

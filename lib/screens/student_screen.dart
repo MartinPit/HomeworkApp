@@ -130,7 +130,11 @@ class _StudentScreenState extends State<StudentScreen> {
                         ChangeNotifierProvider<Homework>(
                       create: (context) =>
                           Homework.fromDoc(snapshot.data!.docs[index]),
-                      child: HomeworkTile(scoredSelected: _scoredSelected, submittedSelected: _submittedSelected, refresh: refresh,),
+                      child: HomeworkTile(
+                        scoredSelected: _scoredSelected,
+                        submittedSelected: _submittedSelected,
+                        refresh: refresh,
+                      ),
                     ),
                   );
                 },
