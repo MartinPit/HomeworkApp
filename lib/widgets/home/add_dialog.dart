@@ -20,7 +20,9 @@ class AddDialog extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<AddDialog> createState() => _AddDialogState();
+  State<AddDialog> createState() {
+    return _AddDialogState();
+  }
 }
 
 class _AddDialogState extends State<AddDialog> {
@@ -34,6 +36,12 @@ class _AddDialogState extends State<AddDialog> {
   String _title = '';
   String _description = '';
   Widget? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    initFromHomework(widget.homework);
+  }
 
   void resetFields() {
     _selectedDate = null;
@@ -67,7 +75,6 @@ class _AddDialogState extends State<AddDialog> {
     if (!isValid || check) {
       return;
     }
-
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
@@ -99,7 +106,6 @@ class _AddDialogState extends State<AddDialog> {
         'attachmentUrl': url,
         'teacherUCO': widget.user.uco,
       };
-
       if (widget.homework != null) {
         await FirebaseFirestore.instance
             .collection('homeworks')
@@ -141,11 +147,11 @@ class _AddDialogState extends State<AddDialog> {
 
   void _subjectHandler(dynamic subject) {
     setState(
-        () => _selectedSubject = subject == null ? null : subject as Subject);
+        () => _selectedSubject = subject);
   }
 
   void _classHandler(dynamic class_) {
-    setState(() => _selectedClass = class_ == null ? null : class_ as Class);
+    setState(() => _selectedClass = class_);
   }
 
   void _pickFile() async {
@@ -175,8 +181,6 @@ class _AddDialogState extends State<AddDialog> {
 
   @override
   Widget build(BuildContext context) {
-    initFromHomework(widget.homework);
-
     return Center(
       child: SingleChildScrollView(
         child: AlertDialog(
