@@ -88,7 +88,7 @@ class _AddDialogState extends State<AddDialog> {
       }
 
       String url = '';
-      if (_selectedFile != null && Utils.isFileTooBig(_selectedFile!.lengthSync())) {
+      if (_selectedFile != null && !Utils.isFileTooBig(_selectedFile!.lengthSync())) {
         final ref = FirebaseStorage.instance
             .ref()
             .child('homework_attachments')
