@@ -1,4 +1,8 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:homework_app/models/classes.dart';
 
 import 'models/subjects.dart';
@@ -29,5 +33,32 @@ class Utils {
 
   static bool isFileTooBig(int size) {
     return size > maxFileSize;
+  }
+
+  static void downloadFile(String url, BuildContext context) async {
+    FlutterDownloader.registerCallback(Utils.downloadCallback);
+
+    @pragma('vm:entry-point')
+    final _ = await FlutterDownloader.enqueue(
+      url: url,
+      savedDir: '/storage/emulated/0/Download',
+      saveInPublicStorage: true,
+      showNotification: true,
+      openFileFromNotification: true,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Súbor bude uložený v priečinku "Downloads"'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort send =
+    IsolateNameServer.lookupPortByName('downloader_send_port')!;
+    send.send([id, status, progress]);
   }
 }
